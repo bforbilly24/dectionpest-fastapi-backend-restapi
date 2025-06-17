@@ -5,7 +5,6 @@ class ServiceFactory:
     _instances = {}
     MODEL_PATHS = {
         "v1": "src/ml_models/best.pt",
-        "v2": "src/ml_models/best_v2.pt",
     }
     DEFAULT_MODEL_VERSION = "v1"
 
@@ -13,11 +12,10 @@ class ServiceFactory:
     def create_detection_service(
         service_type: str = "yolo", model_version: str = None
     ) -> DetectionService:
-
         model_version = model_version or ServiceFactory.DEFAULT_MODEL_VERSION
         if model_version not in ServiceFactory.MODEL_PATHS:
             raise ValueError(
-                f"Unknown model version: {model_version}. Available: {list(ServiceFactory.MODEL_PATHS.keys())}"
+                f"Unknown model version: {model_version}. Only 'v1' is available."
             )
 
         model_path = ServiceFactory.MODEL_PATHS[model_version]
