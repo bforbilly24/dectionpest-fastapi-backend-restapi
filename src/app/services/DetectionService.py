@@ -33,27 +33,36 @@ class DetectionService:
                 class_name = self.class_names[int(cls)]
                 label = f"{class_name}: {conf:.2f}"
 
-                if "grasshopper" in class_name.lower():
-                    detection_data["grasshopper_bites"] += 1
-                elif "caterpillar" in class_name.lower():
+                # Determine color based on pest type
+                # Red for caterpillar (ulat), Blue for grasshopper (belalang)
+                if "caterpillar" in class_name.lower() or "ulat" in class_name.lower():
                     detection_data["caterpillar_bites"] += 1
+                    color = (255, 0, 0)  # Red (BGR format)
+                elif "grasshopper" in class_name.lower() or "belalang" in class_name.lower():
+                    detection_data["grasshopper_bites"] += 1
+                    color = (0, 0, 255)  # Blue (BGR format)
+                else:
+                    # Default green color for unknown classes
+                    color = (0, 255, 0)  # Green (BGR format)
 
                 detection_data["detections"].append(
                     {
                         "class": class_name,
                         "confidence": float(conf),
                         "box": [x1, y1, x2, y2],
+                        "color": "red" if color == (0, 0, 255) else "blue" if color == (255, 0, 0) else "green"
                     }
                 )
 
-                cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                # Draw bounding box with appropriate color
+                cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
                 cv2.putText(
                     image,
                     label,
                     (x1, y1 - 10),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.5,
-                    (0, 255, 0),
+                    color,
                     2,
                 )
 
